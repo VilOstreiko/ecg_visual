@@ -1,0 +1,25 @@
+@font-face {
+  font-family: 'Comfortaa';
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Microsoft YaHei';
+  font-weight: normal;
+  font-style: normal;
+}
+
+html {
+  font-family: 'Comfortaa';
+  font-size: 45px;
+  background-color: $mainBgCol;
+
+  @media (orientation: landscape) and (max-width: 1024px) {
+    font-size: 25px;
+  }
+
+  @media screen and (min-width: 1023px) {
+    font-size: 19px;
+  }
+}

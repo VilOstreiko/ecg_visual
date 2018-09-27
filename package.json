@@ -1,0 +1,35 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "devDependencies": {
+    "autoprefixer": "^7.1.6",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "browser-sync": "^2.23.6",
+    "cssnano": "^3.10.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-postcss": "^7.0.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-imagemin": "^4.1.0",
+    "imagemin-pngquant": "^5.0.1",
+    "gulp-cache": "^1.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build",
+    "start": "gulp serve",
+    "babel": "gulp babel-transpile"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
