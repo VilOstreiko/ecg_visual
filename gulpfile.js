@@ -9,10 +9,12 @@ const imagemin = require('gulp-imagemin');
 const pngquant = require('imagemin-pngquant');
 const cache = require('gulp-cache');
 const babel = require("gulp-babel");
+const clean = require('gulp-clean');
+const runSequence = require('run-sequence');
 const server = require('browser-sync').create();
 
 gulp.task("style", function () {
-    gulp.src("./src/scss/style.scss")
+    return gulp.src("./src/scss/style.scss")
         .pipe(plumber())
         .pipe(sass())
         .pipe(postcss([
@@ -27,44 +29,55 @@ gulp.task("style", function () {
             }),
             cssnano()
         ]))
-        .pipe(gulp.dest("./src/css"))
+        .pipe(gulp.dest("./dist/css"))
 });
 
 gulp.task("babel-transpile", function () {
-    gulp.src("./src/js/script.js")
+    return gulp.src("./src/js/*.js")
         .pipe(plumber())
         .pipe(babel({
             "presets": ["env"]
         }))
-        .pipe(gulp.dest("./dist/js"));
+        .pipe(gulp.dest("./dist/js/"));
+});
+
+gulp.task('clean', function () {
+    return gulp.src('./dist', { read: false })
+        .pipe(clean());
 });
 
 gulp.task('img', function () {
-    gulp.src('./src/img/*')
+    return gulp.src('./src/img/*')
         .pipe(cache(imagemin([
-            imagemin.gifsicle({interlaced: true}),
-            imagemin.jpegtran({progressive: true}),
-            imagemin.svgo({plugins: [{removeViewBox: false}]}),
+            imagemin.gifsicle({ interlaced: true }),
+            imagemin.jpegtran({ progressive: true }),
+            imagemin.svgo({ plugins: [{ removeViewBox: false }] }),
             pngquant()
         ])))
         .pipe(gulp.dest('./dist/img'));
 });
 
-gulp.task("build", ["style", "babel-transpile", "img"], function () {
+gulp.task("pre-build", function (cb) {
+    runSequence("clean",
+        ["style", "babel-transpile", "img"],
+        cb);
+});
+
+gulp.task("build", ["pre-build"], function () {
     gulp.src('./src/css/**/*')
         .pipe(gulp.dest('./dist/css'));
 
     gulp.src('./src/fonts/**/*')
         .pipe(gulp.dest('./dist/fonts'));
 
-    gulp.src(['./src/js/**/*', '!./src/js/script.js'])
-        .pipe(gulp.dest('./dist/js'));
+    gulp.src(['./src/js/lib/*'])
+        .pipe(gulp.dest('./dist/js/lib'));
 
     gulp.src('./src/**/*.html')
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task("serve", ["style", "babel-transpile"], function () {
+gulp.task("serve", ["build"], function () {
     server.init({
         server: './src/',
         notify: false,
@@ -74,7 +87,7 @@ gulp.task("serve", ["style", "babel-transpile"], function () {
     });
 
     gulp.watch("./src/scss/**/*.{scss,sass}", ["style"]);
-    gulp.watch("./src/js/script.js", ["babel-transpile"]);
+    gulp.watch("./src/js/*.js", ["babel-transpile", server.reload]);
     gulp.watch('./src/**/*.html').on('change', server.reload);
     gulp.watch('./src/scss/**/*.scss').on('change', server.reload);
 });

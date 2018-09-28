@@ -1,0 +1,2 @@
+main.initChartStyles();
+main.initChart();
